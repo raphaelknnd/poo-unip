@@ -40,4 +40,67 @@ public class CrudReserva {
 
         return false;
     }
+
+    public void cancelar(int id) throws SQLException{
+        connection = DatabaseConnector.connectionWithDatabase();
+        String sql = "DELETE FROM reserva WHERE id = ?";
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, id);
+        // ResultSet resultSet = preparedStatement.executeQuery();
+        preparedStatement.executeUpdate();
+        // if(resultSet.getString("data") == curDate()){
+        //     System.out.println("Nao e possivel cancelar datas retorativas");
+        // }
+        
+        /*Ainda não consegui desenvolver a lógica para comparar as datas. Pensei em usar essa função abaixo para devolver uma string mas só teria como saber se são iguais e não maior ou menor que. */
+
+        connection.close();
+        preparedStatement.close();
+    }
+
+    // public String curDate() throws SQLException{
+    //     connection = DatabaseConnector.connectionWithDatabase();
+    //     String sql = "SELECT curdate()";
+    //     preparedStatement = connection.prepareStatement(sql);
+    //     ResultSet resultSet = preparedStatement.executeQuery();
+
+    //     return resultSet.getString("curdate()");
+    // }
+
+    public void buscarPorData(String data) throws SQLException{
+        connection = DatabaseConnector.connectionWithDatabase();
+        String sql = "SELECT * FROM reserva WHERE data = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, data);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+
+        if (resultSet.next()) {
+            // Se existirem resultados, obtenha os dados
+            while(resultSet.next()){
+                System.out.println("Id: " + resultSet.getInt("id") + "\nProfessor: " + resultSet.getInt("id_professor") + "\nDatashow: " + resultSet.getInt("id_datashow") + "\nData " + resultSet.getString("data"));
+            }
+        } else {
+            // Caso contrário, imprima uma mensagem informando que não há resultados
+            System.out.println("Nenhum resultado encontrado para a data: " + data);
+        }
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
+    }
+
+    public void listarTodasReservas() throws SQLException{
+        connection = DatabaseConnector.connectionWithDatabase();
+        String sql = "SELECT * FROM reserva";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        while(resultSet.next()){
+            System.out.println("Id: " + resultSet.getInt("id") + "\nProfessor: " + resultSet.getInt("id_professor") + "\nDatashow: " + resultSet.getInt("id_datashow") + "\nData " + resultSet.getString("data"));
+        }
+
+        connection.close();
+        resultSet.close();
+        preparedStatement.close();
+    }
 }
